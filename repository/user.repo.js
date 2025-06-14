@@ -1,13 +1,21 @@
-const UserModel = require('../models/user.model')
+const UserModel = require("../models/user.model");
 class UserRepository {
-    async createUser(data){
+    async createUser(data) {
         try {
-            let savedData = await UserModel.create(data)
-            return savedData
+            let savedData = await UserModel.create(data);
+            return savedData;
         } catch (error) {
-            throw error
+            throw error;
+        }
+    }
+    async emailExists(email) {
+        try {
+            const data = await UserModel.findOne({email,isDeleted:false})
+            return data
+        } catch (error) {
+            throw error;
         }
     }
 }
 
-module.exports  = new UserRepository()
+module.exports = new UserRepository();

@@ -1,37 +1,94 @@
 const mongoose = require("mongoose");
-
-const UserSchema = new mongoose.Schema({
-    name: { 
-        type: String,
-        required: true,
-        trim: true 
+const bcrypt = require("bcrypt");
+const UserSchema = new mongoose.Schema(
+    {
+        fullname: {
+            type: String,
+            required: [true, "Name is required"],
+            trim: true,
+        },
+        email: {
+            type: String,
+            unique: true,
+            required: [true, "Email is required"],
+            trim: true,
+            lowercase: true,
+        },
+        password: {
+            type: String,
+            required: [true, "Password is required"],
+        },
+        role: {
+            type: String,
+            enum: ["admin", "officer", "sic"],
+            //  admin - admin could be a senior officer or IT admin.
+            //  officer - Investigating Officer / Field Officer
+            //  sic(station incharge) - Station Incharge / SHO - Station House Officer
+            default: "officer",
+        },
+        stationId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "policestation",
+            required: [true, "Station Name is Required"],
+        },
+        phone: {
+            type: String,
+            required: [true, "Phone number is required"],
+            trim: true,
+        },
+        badgeNumber: {
+            type: String,
+        },
+        rank: {
+            type: String,
+            required: [true, "Rank is required"],
+        },
+        designation: {
+            type: String,
+        },
+        joiningDate: {
+            type: Date,
+        },
+        lastLogin: {
+            type: Date,
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
+        isVerify: {
+            type: Boolean,
+            default: false,
+        },
+        isAdminDeleted: {
+            type: Boolean,
+            default: false,
+        },
+        admin_msg: {
+            type: String,
+            default: "",
+        },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
     },
-    email : {
-        type: String,
-        unique: true,
-        required : true
-    },
-    password : {
-        type: String,
-        required : true
-    },
-    role : {
-        type : String,
-        enum : ['admin','officer','station_head'],
-        //  admin - admin could be a senior officer or IT admin.
-        //  officer - Investigating Officer / Field Officer
-        //  station_head - Station Incharge / SHO - Station House Officer
-        default : 'officer'
-    },
-    stationId : {
-        type : String,
-        required : true
+    {
+        timestamps: true,
+        versionKey: false,
     }
-  },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
 );
-const UserModel = new mongoose.model('user',UserSchema)
-module.exports = UserModel
+
+// generating a hash password
+
+UserSchema.methods.generateHash = async (password) => {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+// checking if password is valid
+UserSchema.methods.validPassword = async (password, checkPassword) => {
+    return bcrypt.compareSync(password, checkPassword);
+};
+
+const UserModel = new mongoose.model("user", UserSchema);
+
+module.exports = UserModel;
