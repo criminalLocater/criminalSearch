@@ -43,6 +43,10 @@ const criminalSchema = new mongoose.Schema({
       required: true
     }
   },
+  photo: {
+    type: String,
+    required: true
+  },
   status: {
     type: String,
     enum: ['Jail', 'Bail'],

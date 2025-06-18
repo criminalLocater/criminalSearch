@@ -4,7 +4,8 @@ const authCheck = require('../middlewares/auth')()
 const authorizeRoles = require('../middlewares/role')
 
 // user registration
-router.post('/register',authCheck.authenticateAPI,authorizeRoles('admin'),UserController.signup)
+// router.post('/register',authCheck.authenticateAPI,authorizeRoles('admin'),UserController.signup)
+router.post('/register',UserController.signup)
 // user login
 router.post('/login',UserController.signin)
 // all user list
