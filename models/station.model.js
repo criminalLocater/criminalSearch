@@ -27,12 +27,26 @@ const PoliceStationSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        isAdminDeleted: {
+            type: Boolean,
+            default: false,
+        },
+        admin_msg: {
+            type: String,
+            default: "",
+        },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
     },
     {
         timestamps: true,
         versionKey: false,
     }
 );
+PoliceStationSchema.index({ location: "2dsphere" });
+
 const PoliceStationModel = new mongoose.model("station", PoliceStationSchema);
 
 module.exports = PoliceStationModel;

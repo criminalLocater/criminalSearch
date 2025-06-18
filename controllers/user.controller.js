@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const { signupSchema, signinSchema } = require("../validator/user.validator");
 // const { createStationSchema } = require("../validator/station.validator");
 const Mailer = require("../helper/mailer");
-const StationRepository = require("../repository/station.repo");
 class UserController {
     // registration
     async signup(req, res) {
@@ -241,6 +240,8 @@ class UserController {
                 role: value.role || existingUser.role,
                 stationId: value.stationId || existingUser.stationId,
             };
+            console.log(updateData);
+            
 
             // Only hash and update password if provided
             if (value.password) {

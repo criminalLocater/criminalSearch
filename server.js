@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 // api routes
 app.use('/api/user',require('./routes/user.route'))
 app.use('/api/criminals', require('./routes/criminal.route'));
+app.use('/api/station', require('./routes/station.route'));
 
 // server listen
 app.listen(process.env.PORT, async() => {

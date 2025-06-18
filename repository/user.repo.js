@@ -40,11 +40,12 @@ class UserRepository {
         try {
             const updatedData = await UserModel.updateOne(
                 { _id: userId, isDeleted: false },
-                { $set: data },
+                data ,
                 { new: true }
-            ).select(
-                "-isDeleted -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
-            );
+            )
+            // .select(
+            //     "-isDeleted -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
+            // );
             return updatedData;
         } catch (error) {
             throw error;
@@ -52,9 +53,10 @@ class UserRepository {
     }
     async deleteUser(userId) {
         try {
-            const data = await UserModel.updateOne({ _id: userId,isDeleted : true }).select(
-                "-password -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
-            );
+            const data = await UserModel.updateOne({ _id: userId,isDeleted : true })
+            // .select(
+            //     "-password -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
+            // );
             return data;
         } catch (error) {
             throw error;
