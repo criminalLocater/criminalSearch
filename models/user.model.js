@@ -20,16 +20,19 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["admin", "officer", "sic"],
+            enum: ["admin", "officer", "sic", "deo"],
             //  admin - admin could be a senior officer or IT admin.
             //  officer - Investigating Officer / Field Officer
             //  sic(station incharge) - Station Incharge / SHO - Station House Officer
+            //  deo - data entry operator or Desk officer or front-desk staff
+            //        May be a clerk or junior officer , Junior Constable
+
             default: "officer",
         },
         stationId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "policestation",
-            required: [true, "Station Name is Required"],
+            ref: "station",
+            // required: [true, "Station Name is Required"],
         },
         phone: {
             type: String,
@@ -49,14 +52,7 @@ const UserSchema = new mongoose.Schema(
         joiningDate: {
             type: Date,
         },
-        lastLogin: {
-            type: Date,
-        },
         isDeleted: {
-            type: Boolean,
-            default: false,
-        },
-        isVerify: {
             type: Boolean,
             default: false,
         },

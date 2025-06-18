@@ -32,14 +32,13 @@ const signupSchema = Joi.object({
 
 
   role: Joi.string()
-    .valid("admin", "officer", "sic")
+    .valid("admin", "officer", "sic","deo")
     .default("officer")
     .optional(),
 
   stationId: Joi.string()
     .hex()
     .length(24)
-    .required()
     .messages({
       "string.hex": "stationId must be a valid MongoDB ObjectId.",
       "string.length": "stationId must be exactly 24 characters.",

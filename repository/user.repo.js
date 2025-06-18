@@ -18,9 +18,45 @@ class UserRepository {
     }
     async getAllUser() {
         try {
-            const data = await UserModel.find({ isDeleted: false }).select(
-                "-password -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
-            );
+            const data = await UserModel.aggregate([
+                { $match: { isDeleted: false } },
+                {
+                    $lookup : {
+                        from : "stations",
+                        let :{
+                            userId : "$stationId"
+                        },
+                        pipeline : [
+                            {
+                                $match :{
+                                    $expr : {
+                                        $and :[
+                                            {$eq : ["$isDeleted",false]},
+                                            {$eq : ["$_id","$$userId"]}
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as : "policeStation",
+                    }
+                },
+                {$unwind : "$policeStation"},
+                {
+                    $project: {
+                        id: "$_id",
+                        fullName: 1,
+                        email: 1,
+                        role: 1,
+                        stationId: "$policeStation.stationName",
+                        badgeNumber: 1,
+                        rank: 1,
+                        designation: 1,
+                        joiningDate: 1,
+                        _id: 0,
+                    },
+                },
+            ]);
             return data;
         } catch (error) {
             throw error;
@@ -40,9 +76,9 @@ class UserRepository {
         try {
             const updatedData = await UserModel.updateOne(
                 { _id: userId, isDeleted: false },
-                data ,
+                data,
                 { new: true }
-            )
+            );
             // .select(
             //     "-isDeleted -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
             // );
@@ -53,10 +89,13 @@ class UserRepository {
     }
     async deleteUser(userId) {
         try {
-            const data = await UserModel.updateOne({ _id: userId,isDeleted : true })
-            // .select(
-            //     "-password -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
-            // );
+            const data = await UserModel.updateOne(
+                { _id: userId, isDeleted: false },
+                { $set: { isDeleted: true } },
+                { new: true }
+            ).select(
+                "-password -createdAt -updatedAt -isVerify -isAdminDeleted -admin_msg -isActive"
+            );
             return data;
         } catch (error) {
             throw error;

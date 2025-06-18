@@ -69,7 +69,7 @@ class UserController {
                 mailer.sendMail(mailObj);
                 const userWithoutSensitiveData = await UserModel.findById(
                     newUser._id
-                );
+                ).select("-password");
 
                 return res.status(200).json({
                     status: 200,
