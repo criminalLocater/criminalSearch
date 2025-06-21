@@ -53,6 +53,7 @@ class UserRepository {
                         rank: 1,
                         designation: 1,
                         joiningDate: 1,
+                        photo: 1,
                         _id: 0,
                     },
                 },

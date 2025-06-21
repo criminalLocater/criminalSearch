@@ -52,6 +52,10 @@ const UserSchema = new mongoose.Schema(
         joiningDate: {
             type: Date,
         },
+        photo: {
+            type: String,
+            default: "",
+        },
         isDeleted: {
             type: Boolean,
             default: false,

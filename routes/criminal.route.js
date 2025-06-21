@@ -2,15 +2,13 @@
 const express = require('express');
 const router = express.Router();
 const criminalController = require('../controllers/criminal.controller');
+const upload = require('../middlewares/multer');
 
-// Import multer config
-const { upload, validatePhotoUpload } = require('../middlewares/multer');
+// POST: Create Criminal - Requires 1 photo
+router.post('/', upload.single('photo'), criminalController.createCriminal);
 
-// POST: Create Criminal - Requires 1-5 photos
-router.post('/', upload.array('photos', 5), validatePhotoUpload, criminalController.createCriminal);
-
-// PUT: Update Criminal - Optional update of photos
-router.put('/:id', upload.array('photos', 5), validatePhotoUpload, criminalController.updateCriminal);
+// PUT: Update Criminal - Optional update of photo
+router.put('/:id', upload.single('photo'), criminalController.updateCriminal);
 
 // GET, GET by ID, DELETE, etc.
 router.get('/', criminalController.getAllCriminals);

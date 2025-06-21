@@ -43,6 +43,11 @@ class UserController {
                 });
             }
             const hashedPassword = await new UserModel().generateHash(password);
+            // Add photo path if uploaded
+        let photoPath = "";
+        if (req.file) {
+            photoPath = `http://127.0.0.1:3000/uploads/${req.file.filename}`;
+        }
             const newUser = await UserRepository.createUser({
                 fullName,
                 email,
@@ -54,6 +59,7 @@ class UserController {
                 rank,
                 designation,
                 joiningDate,
+                photo: photoPath,
             });
             if (newUser) {
                 const mailer = new Mailer(
@@ -249,7 +255,10 @@ class UserController {
                     value.password
                 );
             }
-
+            // Update photo if uploaded
+            if (req.file) {
+            updateData.photo = `http://127.0.0.1:3000/uploads/${req.file.filename}`;
+        }
             // Pass to repository for update
             const updatedUser = await UserRepository.updateUser(id, updateData);
 

@@ -2,24 +2,29 @@ const criminalRepo = require('../repository/criminal.repo');
 
 class CriminalController {
   async createCriminal(req, res) {
-  try {
-    const criminalData = req.body;
-    // Set uploaded photo paths
-    criminalData.photos = req.files.map(file => `/uploads/${file.filename}`);
-    const criminal = await criminalRepo.createCriminal(criminalData);
-    res.status(201).json({
-      success: true,
-      message: 'Criminal created successfully',
-      data: criminal,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create criminal',
-      error: err.message,
-    });
+    try {
+      const criminalData = req.body;
+
+      // Set uploaded photo path
+      if (req.file) {
+        criminalData.photo = `http://127.0.0.1:3000/uploads/${req.file.filename}`;
+      }
+
+      const criminal = await criminalRepo.createCriminal(criminalData);
+
+      res.status(201).json({
+        success: true,
+        message: 'Criminal created successfully',
+        data: criminal,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create criminal',
+        error: err.message,
+      });
+    }
   }
-}
 
   async getAllCriminals(req, res) {
     try {
@@ -64,32 +69,37 @@ class CriminalController {
     }
   }
   async updateCriminal(req, res) {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-    if (req.files && req.files.length > 0) {
-      updateData.photos = req.files.map(file => `/uploads/${file.filename}`);
-    }
-    const updatedCriminal = await criminalRepo.updateCriminal(id, updateData);
-    if (!updatedCriminal) {
-      return res.status(404).json({
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+
+      if (req.file) {
+        updateData.photo = `http://127.0.0.1:3000/uploads/${req.file.filename}`;
+      }
+
+      const updatedCriminal = await criminalRepo.updateCriminal(id, updateData);
+
+      if (!updatedCriminal) {
+        return res.status(404).json({
+          success: false,
+          message: 'Criminal not found',
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Criminal updated successfully',
+        data: updatedCriminal,
+      });
+    } catch (err) {
+      res.status(500).json({
         success: false,
-        message: 'Criminal not found',
+        message: 'Failed to update criminal',
+        error: err.message,
       });
     }
-    res.status(200).json({
-      success: true,
-      message: 'Criminal updated successfully',
-      data: updatedCriminal,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update criminal',
-      error: err.message,
-    });
   }
-}
+
   async deleteCriminal(req, res) {
     try {
       const { id } = req.params;
