@@ -14,7 +14,7 @@ router.post('/login',UserController.signin)
 
 // all user list
 router.get('/allUser',authCheck.authenticateAPI,authorizeRoles('admin'),UserController.getAllUser)
-// edit specific user
+// getData of specific user
 router.get('/edit',authCheck.authenticateAPI,UserController.getSpecificUser)
 // update user
 router.put('/update/:id',authCheck.authenticateAPI,upload.single('photo'),authorizeRoles('admin'),UserController.updateUser)

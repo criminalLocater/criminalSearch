@@ -2,29 +2,41 @@ const criminalRepo = require('../repository/criminal.repo');
 
 class CriminalController {
   async createCriminal(req, res) {
-    try {
-      const criminalData = req.body;
+  try {
+    let criminalData = { ...req.body };
 
-      // Set uploaded photo path
-      if (req.file) {
-        criminalData.photo = `http://127.0.0.1:3000/uploads/${req.file.filename}`;
+    // Parse location if it's a string
+    if (criminalData.location) {
+      try {
+        criminalData.location = JSON.parse(criminalData.location);
+      } catch (e) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid location format. Must be a valid GeoJSON.',
+        });
       }
-
-      const criminal = await criminalRepo.createCriminal(criminalData);
-
-      res.status(201).json({
-        success: true,
-        message: 'Criminal created successfully',
-        data: criminal,
-      });
-    } catch (err) {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to create criminal',
-        error: err.message,
-      });
     }
+
+    // Set uploaded photo path
+    if (req.file) {
+      criminalData.photo = `http://127.0.0.1:3000/uploads/${req.file.filename}`;
+    }
+
+    const criminal = await criminalRepo.createCriminal(criminalData);
+
+    res.status(201).json({
+      success: true,
+      message: 'Criminal created successfully',
+      data: criminal,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create criminal',
+      error: err.message,
+    });
   }
+}
 
   async getAllCriminals(req, res) {
     try {
