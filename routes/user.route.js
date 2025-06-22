@@ -20,4 +20,6 @@ router.get('/edit',authCheck.authenticateAPI,UserController.getSpecificUser)
 router.put('/update/:id',authCheck.authenticateAPI,upload.single('photo'),authorizeRoles('admin'),UserController.updateUser)
 // delete user
 router.delete('/delete/:id',authCheck.authenticateAPI,authorizeRoles('admin'),UserController.deleteUser)
+router.post('/forgotpassword',authCheck.authenticateAPI, UserController.forgotPassword);
+router.post('/update-password/:token',authCheck.authenticateAPI, UserController.updatePassword);
 module.exports = router

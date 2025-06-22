@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { signupSchema, signinSchema } = require("../validator/user.validator");
 // const { createStationSchema } = require("../validator/station.validator");
 const Mailer = require("../helper/mailer");
+const userRepo = require("../repository/user.repo");
 class UserController {
     // registration
     async signup(req, res) {
@@ -362,6 +363,147 @@ class UserController {
             });
         }
     }
+   // user.controller.js
+
+async forgotPassword(req, res) {
+    try {
+        const { email } = req.body;
+        const user = await UserRepository.forgotPassword(email);
+        console.log("User:", user);
+        
+
+        if (!user) {
+            return res.status(401).json({
+                status: 401,
+                message: "Sorry user not found!"
+            });
+        }
+
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        const link = `http://localhost:5173/reset-password/${token}`;
+        const mailer = new Mailer(
+            "Gmail",
+            process.env.APP_EMAIL,
+            process.env.APP_PASSWORD
+        );
+
+        const mailObj = {
+            to: email,
+            subject: "Password Reset Request",
+            text: `Hello ${user.fullName},You requested to reset your password. Please click the link below to proceed:
+
+  ${link}
+
+  This link will expire in 1 hour.
+
+  If you did not request a password reset, please ignore this email.
+
+  Thank you!
+  
+  Best regards,
+  Barrackpore Police Commissionerate
+  
+  This is an automatically generated email. Please do not reply.
+  
+  © 2025 Barrackpore Police Commissionerate. All rights reserved.
+  Powered by Barrackpore Police IT Team | Version 1.0`,
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+      <h2 style="color: #003366;">Password Reset Request</h2>
+      
+      <p>Hello ${user.fullName},</p>
+
+      <p>You requested to reset your password. Click the button below to proceed:</p>
+
+      <p style="text-align: center; margin: 20px 0;">
+        <a href="${link}" 
+           style="
+             display: inline-block;
+             padding: 12px 24px;
+             background-color: #007BFF;
+             color: #fff !important;
+             text-decoration: none;
+             border-radius: 5px;
+             font-weight: bold;">
+          Reset Password
+        </a>
+      </p>
+
+      <p>This link will expire in 1 hour.</p>
+
+      <p>If you did not request a password reset, please ignore this email.</p>
+
+      <hr style="margin-top: 25px; border: none; border-top: 1px solid #eee;" />
+
+      <p style="font-size: 14px; color: #555; margin-top: 20px;">
+        This is an automatically generated email. Please do not reply.
+      </p>
+      <p style="font-size: 14px; color: #555;">
+        © 2025 Barrackpore Police Commissionerate. All rights reserved.
+      </p>
+      <p style="font-size: 14px; color: #555;">
+        Powered by Barrackpore Police IT Department | Version 1.0
+      </p>
+    </div>
+  `,
+        };
+
+        await mailer.sendMail(mailObj);
+
+        return res.status(200).json({
+            status: 200,
+            data: { userId: user._id },
+            message: "Password reset email sent"
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: 500,
+            message: "Internal server error"
+        });
+    }
+}
+
+// user.controller.js
+
+async updatePassword(req, res) {
+    try {
+        const { token } = req.params;
+        const { password, confirmPassword } = req.body;
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await UserModel.findById(decoded.userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await UserRepository.updatePassword(user._id, hashedPassword);
+
+        return res.status(200).json({
+            status: 200,
+            message: "Password updated successfully"
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: 500,
+            message: "Internal server error"
+        });
+    }
+}
 }
 
 module.exports = new UserController();

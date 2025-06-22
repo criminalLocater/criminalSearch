@@ -18,6 +18,7 @@ class Mailer {
             to: mailObj.to, // recipient email
             subject: mailObj.subject, // email subject
             text: mailObj.text, // plain text body
+            html: mailObj.html // html body (optional) 
             // html: "<h1>Hello!</h1><p>This is a <b>test email</b> sent using Nodemailer.</p>", // html body (optional)
         };
         try {

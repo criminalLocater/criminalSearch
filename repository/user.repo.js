@@ -102,6 +102,20 @@ class UserRepository {
             throw error;
         }
     }
+    // user.repository.js
+
+async forgotPassword(email) {
+    const user = await UserModel.findOne({ email });
+    console.log("Fetched user:", user); // ✅ Add this
+    return user; // Return only the user object
+}
+
+async updatePassword(userId, hashedPassword) {
+    return await UserModel.updateOne(
+        { _id: userId, isDeleted: false },
+        { $set: { password: hashedPassword } }
+    );
+}
 }
 
 module.exports = new UserRepository();
