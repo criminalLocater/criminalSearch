@@ -2,7 +2,7 @@ const UserRepository = require("../repository/user.repo");
 const UserModel = require("../models/user.model");
 
 const jwt = require("jsonwebtoken");
-const { signupSchema, signinSchema } = require("../validator/user.validator");
+const { signupSchema, signinSchema, updateUser } = require("../validator/user.validator");
 // const { createStationSchema } = require("../validator/station.validator");
 const Mailer = require("../helper/mailer");
 const userRepo = require("../repository/user.repo");
@@ -215,7 +215,7 @@ class UserController {
     // update user
     async updateUser(req, res) {
         try {
-            const { error, value } = signupSchema.validate(req.body, {
+            const { error, value } = updateUser.validate(req.body, {
                 abortEarly: false,
             });
             if (error) {

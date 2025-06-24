@@ -99,14 +99,14 @@ const updateUser = Joi.object({
       "any.required": "Email is required.",
     }),
 
-  password: Joi.string()
-    .pattern(passwordRegex)
-    .required()
-    .messages({
-      "string.pattern.base":
-        "Password must be at least 8 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.",
-      "any.required": "Password is required.",
-    }),
+  // password: Joi.string()
+  //   .pattern(passwordRegex)
+  //   .required()
+  //   .messages({
+  //     "string.pattern.base":
+  //       "Password must be at least 8 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.",
+  //     // "any.required": "Password is required.",
+  //   }),
 
 
   role: Joi.string()
@@ -124,13 +124,13 @@ const updateUser = Joi.object({
       "any.required": "Station ID is required.",
     }),
 
-  phone: Joi.string()
-    .pattern(/^[0-9]{10,15}$/)
-    .required()
-    .messages({
-      "string.pattern.base": "Phone number must be between 10 to 15 digits.",
-      "any.required": "Phone number is required.",
-    }),
+  // phone: Joi.string()
+  //   .pattern(/^[0-9]{10,15}$/)
+  //   .required()
+  //   .messages({
+  //     "string.pattern.base": "Phone number must be between 10 to 15 digits.",
+  //     // "any.required": "Phone number is required.",
+  //   }),
 
   badgeNumber: Joi.string().optional(),
 
@@ -147,5 +147,6 @@ const updateUser = Joi.object({
 })
 module.exports = {
     signupSchema,
-    signinSchema
+    signinSchema,
+    updateUser
 };
