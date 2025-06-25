@@ -54,7 +54,7 @@ class UserRepository {
                         designation: 1,
                         joiningDate: 1,
                         photo: 1,
-                        _id: 0,
+                        _id: 1,
                     },
                 },
             ]);
@@ -111,6 +111,12 @@ async forgotPassword(email) {
 }
 
 async updatePassword(userId, hashedPassword) {
+    return await UserModel.updateOne(
+        { _id: userId, isDeleted: false },
+        { $set: { password: hashedPassword } }
+    );
+}
+async changePassword(userId, hashedPassword) {
     return await UserModel.updateOne(
         { _id: userId, isDeleted: false },
         { $set: { password: hashedPassword } }

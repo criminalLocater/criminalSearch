@@ -22,4 +22,5 @@ router.put('/update/:id',authCheck.authenticateAPI,upload.single('photo'),author
 router.delete('/delete/:id',authCheck.authenticateAPI,authorizeRoles('admin'),UserController.deleteUser)
 router.post('/forgotpassword',authCheck.authenticateAPI, UserController.forgotPassword);
 router.post('/update-password/:token',authCheck.authenticateAPI, UserController.updatePassword);
+router.put('/change-password/:userId',authCheck.authenticateAPI, UserController.changePassword);
 module.exports = router

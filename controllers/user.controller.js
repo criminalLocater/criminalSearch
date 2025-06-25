@@ -145,7 +145,7 @@ class UserController {
 
             const userWithoutSensitiveData = await UserModel.findById(
                 user._id
-            ).select("-password -_id -isDeleted -createdAt -updatedAt");
+            ).select("-password -isDeleted -createdAt -updatedAt");
 
             return res.status(200).send({
                 status: 200,
@@ -504,6 +504,32 @@ async updatePassword(req, res) {
         });
     }
 }
-}
+async changePassword(req, res) {
+    try {
+        const { userId } = req.params;
+        const { password, confirmPassword } = req.body;
 
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+       const hashedPassword = await new UserModel().generateHash(password);
+        const user = await UserRepository.changePassword(userId, hashedPassword);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: "Password updated successfully"
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: 500,
+            message: "Internal server error"
+        });
+    }   
+}
+}
 module.exports = new UserController();
