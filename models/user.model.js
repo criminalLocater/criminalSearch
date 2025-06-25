@@ -20,12 +20,10 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["admin", "officer", "sic", "deo"],
+            enum: ["admin", "officer", "sic"],
             //  admin - admin could be a senior officer or IT admin.
             //  officer - Investigating Officer / Field Officer
             //  sic(station incharge) - Station Incharge / SHO - Station House Officer
-            //  deo - data entry operator or Desk officer or front-desk staff
-            //        May be a clerk or junior officer , Junior Constable
 
             default: "officer",
         },
