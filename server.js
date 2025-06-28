@@ -40,6 +40,7 @@ app.use((req, res, next) => {
 app.use('/api/user',require('./routes/user.route'))
 app.use('/api/criminals', require('./routes/criminal.route'));
 app.use('/api/station', require('./routes/station.route'));
+app.use('/api/contact', require('./routes/contact.route'));
 
 // server listen
 app.listen(process.env.PORT, async() => {
