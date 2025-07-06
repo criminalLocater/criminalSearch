@@ -38,7 +38,10 @@ class StationController {
   // READ ALL
   async getAllStations(req, res) {
     try {
-      const stations = await StationRepository.getAllStations();
+      const {page=1,limit=5}= req.query
+      const stations = await StationRepository.getAllStations(page,limit);
+      console.log("stations ",stations);
+      
       return res.status(200).json({
         status: 200,
         message: "All stations fetched successfully",

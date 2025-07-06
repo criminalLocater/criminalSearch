@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
 const PoliceStationSchema = new mongoose.Schema(
     {
@@ -46,6 +47,7 @@ const PoliceStationSchema = new mongoose.Schema(
     }
 );
 PoliceStationSchema.index({ location: "2dsphere" });
+PoliceStationSchema.plugin(aggregatePaginate)
 
 const PoliceStationModel = new mongoose.model("station", PoliceStationSchema);
 

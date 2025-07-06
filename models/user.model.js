@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const UserSchema = new mongoose.Schema(
     {
         fullName: {
@@ -86,7 +87,7 @@ UserSchema.methods.generateHash = async (password) => {
 UserSchema.methods.validPassword = async (password, checkPassword) => {
     return bcrypt.compareSync(password, checkPassword);
 };
-
+UserSchema.plugin(aggregatePaginate)
 const UserModel = new mongoose.model("user", UserSchema);
 
 module.exports = UserModel;

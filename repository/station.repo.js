@@ -9,58 +9,77 @@ class StationRepository {
         }
     }
 
-    async getAllStations() {
+    async getAllStations(page = 1, limit = 5) {
         try {
-            return await PoliceStationModel.aggregate([
-                { $match: { isDeleted: false } },
-                {
-                    $lookup: {
-                        from: "users",
-                        let: {
-                            pid: "$_id",
+            const options = {
+                page,
+                limit,
+            };
+            const data = await PoliceStationModel.aggregatePaginate(
+                [
+                    { $match: { isDeleted: false } },
+                    {
+                        $lookup: {
+                            from: "users",
+                            let: {
+                                pid: "$_id",
+                            },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$isDeleted", false] },
+                                                {
+                                                    $eq: [
+                                                        "$stationId",
+                                                        "$$pid",
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    },
+                                },
+                            ],
+                            as: "userInfo",
                         },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [
-                                            { $eq: ["$isDeleted", false] },
-                                            { $eq: ["$stationId", "$$pid"] },
-                                        ],
+                    },
+                    {
+                        $project: {
+                            id: "$_id",
+                            stationName: 1,
+                            contactNumber: 1,
+                            location: 1,
+                            policeList: {
+                                $map: {
+                                    input: "$userInfo",
+                                    as: "user",
+                                    in: {
+                                        name: "$$user.fullName",
+                                        email: "$$user.email",
+                                        role: "$$user.role",
+                                        rank: "$$user.rank",
+                                        designation: "$$user.designation",
+                                        joiningDate: "$$user.joiningDate",
                                     },
                                 },
                             },
-                        ],
-                        as: "userInfo",
-                    },
-                },
-                {
-                    $project: {
-                        id: "$_id",
-                        stationName: 1,
-                        contactNumber: 1,
-                        location: 1,
-                        policeList: {
-                            $map: {
-                                input: "$userInfo",
-                                as: "user",
-                                in: {
-                                    name: "$$user.fullName",
-                                    email: "$$user.email",
-                                    role: "$$user.role",
-                                    rank: "$$user.rank",
-                                    designation: "$$user.designation",
-                                    joiningDate: "$$user.joiningDate",
-                                },
-                            },
+                            isActive: 1,
+                            createdAt: 1,
+                            updatedAt: 1,
+                            _id: 0,
                         },
-                        isActive: 1,
-                        createdAt: 1,
-                        updatedAt: 1,
-                        _id: 0,
                     },
-                },
-            ]);
+                ],
+                options
+            );
+            return {
+                total: data.totalDocs,
+                page: data.page,
+                limit: data.limit,
+                totalPages: data.totalPages,
+                users: data.docs,
+            };
         } catch (error) {
             throw error;
         }

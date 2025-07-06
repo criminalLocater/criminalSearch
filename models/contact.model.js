@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
+
 const contactSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -23,6 +25,7 @@ const contactSchema = new mongoose.Schema({
     timestamps: true,
     versionKey: false
 });
+contactSchema.plugin(aggregatePaginate)
 
 
 module.exports = mongoose.model('Contact', contactSchema);

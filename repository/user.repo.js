@@ -16,9 +16,13 @@ class UserRepository {
             throw error;
         }
     }
-    async getAllUser() {
+    async getAllUser(page = 1,limit =5) {
         try {
-            const data = await UserModel.aggregate([
+            const options = {
+                page,
+                limit
+            }
+            const data = await UserModel.aggregatePaginate([
                 { $match: { isDeleted: false } },
                 {
                     $lookup : {
@@ -57,8 +61,15 @@ class UserRepository {
                         _id: 1,
                     },
                 },
-            ]);
-            return data;
+            ],options);
+            return {
+                total : data.totalDocs,
+                page : data.page,
+                limit : data.limit,
+                totalPages : data.totalPages,
+                users : data.docs,
+
+            };
         } catch (error) {
             throw error;
         }
