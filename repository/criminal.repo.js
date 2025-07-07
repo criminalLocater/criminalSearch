@@ -10,7 +10,7 @@ class CriminalRepository {
         }
     }
 
-    async getAllCriminals(page = 1, limit = 5) {
+    async getAllCriminals(page, limit) {
         try {
             const options = {
                 page,

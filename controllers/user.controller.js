@@ -164,8 +164,8 @@ class UserController {
     // get all user
     async getAllUser(req, res) {
         try {
-            const {page = 1,limit = 5} = req.query
-            const allData = await UserRepository.getAllUser(page,limit);
+            const { page, limit } = req.query;
+            const allData = await UserRepository.getAllUser(page, limit);
             if (allData) {
                 return res.status(201).send({
                     status: 201,

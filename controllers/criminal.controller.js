@@ -41,9 +41,9 @@ class CriminalController {
 
     async getAllCriminals(req, res) {
         try {
-            const { page = 1, limit = 5 } = req.query;
+            const { page , limit } = req.query;
 
-            const criminals = await criminalRepo.getAllCriminals(page,limit);
+            const criminals = await criminalRepo.getAllCriminals(page, limit);
             res.status(200).json({
                 success: true,
                 message: "All criminals fetched successfully",

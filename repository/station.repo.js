@@ -9,7 +9,7 @@ class StationRepository {
         }
     }
 
-    async getAllStations(page = 1, limit = 5) {
+    async getAllStations(page, limit) {
         try {
             const options = {
                 page,
